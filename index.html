@@ -3,870 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图书借阅管理系统 - 登录</title>
+    <title>市人医院部门电话查询系统</title>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-        .card-hover {
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .search-container {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
             transition: all 0.3s ease;
         }
-        .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        
+        .search-container:focus-within {
+            box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
         }
-        .mobile-menu {
-            max-height: 0;
+        
+        .search-input {
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .department-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             overflow: hidden;
-            transition: max-height 0.3s ease;
         }
-        .mobile-menu.active {
-            max-height: 500px;
+        
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
         }
-        .login-container {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        
+        .department-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            color: #3b82f6;
+            font-size: 20px;
+        }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .filter-btn:hover {
+            background-color: #dbeafe;
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-administration {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .badge-logistics {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-outpatient {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-inpatient {
+            background-color: #fce7f3;
+            color: #9d174d;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+        
+        /* 骨架屏样式 */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .no-phone {
+            color: #94a3b8;
         }
     </style>
 </head>
-<body class="login-container min-h-screen flex items-center justify-center">
-    <!-- 登录页面 -->
-    <div id="loginPage" class="w-full max-w-md px-8 py-12">
-        <div class="bg-white rounded-xl shadow-xl p-8 card-hover">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-indigo-600 mb-2">
-                    <i class="fas fa-book mr-2"></i>图书管理系统
-                </h1>
-                <p class="text-gray-600">请输入您的账号密码登录系统</p>
+<body class="min-h-screen">
+    <!-- 头部导航 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <img src="https://s.coze.cn/image/dd3QchxiSIw/" alt="市医院logo" class="h-12 w-12 rounded-full object-cover mr-3">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">市医院</h1>
+                    <p class="text-sm text-gray-500">部门电话查询系统</p>
+                </div>
             </div>
-
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
-                    <input type="text" id="username" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="请输入用户名">
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
-                    <input type="password" id="password" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="请输入密码">
-                </div>
-
-                <div id="errorMessage" class="text-red-500 text-sm hidden">
-                    <i class="fas fa-exclamation-circle mr-1"></i> 用户名或密码不正确
-                </div>
-
-                <button type="submit" id="loginBtn"
-                    class="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    <i class="fas fa-sign-in-alt mr-2"></i>登录
-                </button>
-            </form>
+            <div class="text-sm text-red-500">
+                <i class="fas fa-phone-alt mr-1"></i> 胸痛中心：13339681120  卒中中心：19985181098
+            </div>
         </div>
-    </div>
+    </header>
 
-    <!-- 主系统页面 (默认隐藏) -->
-    <div id="mainSystem" class="hidden w-full">
-        <!-- 导航栏 -->
-        <nav class="bg-white shadow-md sticky top-0 z-50">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="text-xl font-bold text-indigo-600">
-                    <i class="fas fa-book mr-2"></i>图书管理系统
-                </div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="#books" class="text-gray-600 hover:text-indigo-600 transition-colors">图书管理</a>
-                    <a href="#users" class="text-gray-600 hover:text-indigo-600 transition-colors">用户管理</a>
-                    <a href="#borrow" class="text-gray-600 hover:text-indigo-600 transition-colors">借阅管理</a>
-                    <a href="#records" class="text-gray-600 hover:text-indigo-600 transition-colors">借阅记录</a>
-                    <button id="logoutBtn" class="text-gray-600 hover:text-indigo-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-1"></i>退出登录
-                    </button>
-                </div>
-                <button class="md:hidden text-gray-600 focus:outline-none" id="mobileMenuButton">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- 移动端菜单 -->
-            <div class="mobile-menu bg-white md:hidden" id="mobileMenu">
-                <div class="px-4 py-2 space-y-2">
-                    <a href="#books" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded transition-colors">
-                        <i class="fas fa-book mr-2"></i>图书管理
-                    </a>
-                    <a href="#users" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded transition-colors">
-                        <i class="fas fa-users mr-2"></i>用户管理
-                    </a>
-                    <a href="#borrow" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded transition-colors">
-                        <i class="fas fa-exchange-alt mr-2"></i>借阅管理
-                    </a>
-                    <a href="#records" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded transition-colors">
-                        <i class="fas fa-history mr-2"></i>借阅记录
-                    </a>
-                    <button id="logoutBtnMobile" class="block w-full text-left px-4 py-2 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>退出登录
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 搜索区域 -->
+        <div class="search-container p-6 mb-8">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-white mb-4 text-center">查找医院部门联系方式</h2>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="请输入部门名称搜索..." 
+                        class="search-input w-full px-5 py-4 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <button id="searchButton" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-colors">
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
-        </nav>
-
-        <div class="container mx-auto px-4 py-8">
-            <!-- 图书管理 -->
-            <section id="books" class="mb-12">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-book mr-2 text-indigo-600"></i>图书管理
-                    </h2>
-                    <button id="addBookBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors">
-                        <i class="fas fa-plus mr-1"></i>添加图书
-                    </button>
-                </div>
-
-                <!-- 添加图书表单 -->
-                <div id="addBookForm" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">添加新图书</h3>
-                    <form id="bookForm" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="bookTitle" class="block text-sm font-medium text-gray-700 mb-1">书名</label>
-                                <input type="text" id="bookTitle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                            <div>
-                                <label for="bookAuthor" class="block text-sm font-medium text-gray-700 mb-1">作者</label>
-                                <input type="text" id="bookAuthor" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                            <div>
-                                <label for="bookISBN" class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
-                                <input type="text" id="bookISBN" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                            <div>
-                                <label for="bookQuantity" class="block text-sm font-medium text-gray-700 mb-1">库存数量</label>
-                                <input type="number" id="bookQuantity" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                        </div>
-                        <div class="flex justify-end space-x-3">
-                            <button type="button" id="cancelBookBtn" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">保存</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 图书列表 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">书名</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作者</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">库存</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bookList" class="bg-white divide-y divide-gray-200">
-                                <!-- 图书数据将通过JS动态加载 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 用户管理 -->
-            <section id="users" class="mb-12">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-users mr-2 text-indigo-600"></i>用户管理
-                    </h2>
-                    <button id="addUserBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors">
-                        <i class="fas fa-plus mr-1"></i>添加用户
-                    </button>
-                </div>
-
-                <!-- 添加用户表单 -->
-                <div id="addUserForm" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">添加新用户</h3>
-                    <form id="userForm" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
-                                <input type="text" id="userName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                            <div>
-                                <label for="userID" class="block text-sm font-medium text-gray-700 mb-1">学号/工号</label>
-                                <input type="text" id="userID" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                            <div>
-                                <label for="userPhone" class="block text-sm font-medium text-gray-700 mb-1">联系方式</label>
-                                <input type="tel" id="userPhone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                            </div>
-                        </div>
-                        <div class="flex justify-end space-x-3">
-                            <button type="button" id="cancelUserBtn" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">取消</button>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">保存</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 用户列表 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">姓名</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学号/工号</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">联系方式</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userList" class="bg-white divide-y divide-gray-200">
-                                <!-- 用户数据将通过JS动态加载 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 借阅管理 -->
-            <section id="borrow" class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                    <i class="fas fa-exchange-alt mr-2 text-indigo-600"></i>借阅管理
-                </h2>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- 借阅表单 -->
-                    <div class="bg-white rounded-lg shadow-md p-6 card-hover">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-700">借阅图书</h3>
-                        <form id="borrowForm" class="space-y-4">
-                            <div>
-                                <label for="borrowUser" class="block text-sm font-medium text-gray-700 mb-1">选择用户</label>
-                                <select id="borrowUser" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                                    <option value="">请选择用户</option>
-                                    <!-- 用户选项将通过JS动态加载 -->
-                                </select>
-                            </div>
-                            <div>
-                                <label for="borrowBook" class="block text-sm font-medium text-gray-700 mb-1">选择图书</label>
-                                <select id="borrowBook" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                                    <option value="">请选择图书</option>
-                                    <!-- 图书选项将通过JS动态加载 -->
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">借阅日期</label>
-                                <input type="text" id="borrowDate" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                            </div>
-                            <div class="flex justify-end">
-                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">确认借阅</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- 当前借出图书列表 -->
-                    <div class="bg-white rounded-lg shadow-md p-6 card-hover">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-700">当前借出图书</h3>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">图书</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">借阅日期</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="borrowedList" class="bg-white divide-y divide-gray-200">
-                                    <!-- 借出图书数据将通过JS动态加载 -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 借阅记录 -->
-            <section id="records">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-history mr-2 text-indigo-600"></i>借阅记录
-                    </h2>
-                    <div class="flex items-center">
-                        <input type="text" id="searchRecord" placeholder="搜索..." class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <button id="searchBtn" class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">图书</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">借阅日期</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">归还日期</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recordList" class="bg-white divide-y divide-gray-200">
-                                <!-- 借阅记录数据将通过JS动态加载 -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
         </div>
 
-        <!-- 页脚 -->
-        <footer class="bg-gray-800 text-white py-6 mt-12">
-            <div class="container mx-auto px-4 text-center">
-                <p class="mb-2">created by <a href="https://space.coze.cn" class="text-indigo-300 hover:text-indigo-400">coze space</a></p>
-                <p class="text-sm text-gray-400">页面内容均由 AI 生成，仅供参考</p>
+        <!-- 筛选按钮区域 -->
+        <div class="flex flex-wrap gap-2 mb-6 justify-center">
+            <button class="filter-btn active px-4 py-2 text-sm font-medium" data-filter="all">
+                <i class="fas fa-building mr-1"></i> 全部
+            </button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium" data-filter="administration">
+                <i class="fas fa-landmark mr-1"></i> 行政楼
+            </button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium" data-filter="logistics">
+                <i class="fas fa-tools mr-1"></i> 后勤楼
+            </button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium" data-filter="outpatient">
+                <i class="fas fa-stethoscope mr-1"></i> 门诊
+            </button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium" data-filter="inpatient">
+                <i class="fas fa-hospital-user mr-1"></i> 住院部
+            </button>
+        </div>
+
+        <!-- 搜索结果区域 -->
+        <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 部门卡片将通过JavaScript动态生成 -->
+            <div class="no-results col-span-full">
+                <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
+                <p>请输入部门名称进行搜索</p>
             </div>
-        </footer>
-    </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">市医院 © 2024 版权所有</p>
+            <p class="text-sm text-gray-400">
+                created by SQG | 
+                皮肤科制作，仅供参考
+            </p>
+        </div>
+    </footer>
 
     <script>
-        // 默认账号密码
-        const DEFAULT_USERNAME = "adminpfk";
-        const DEFAULT_PASSWORD = "pfk666";
+        // 根据Excel数据构建医院部门数据
+        const departmentData = [
+            // 后勤楼 (logistics)
+            { id: 1, name: "总务科1", phone: "8321171", location: "后勤楼3楼", building: "logistics" },
+            { id: 2, name: "总务科2", phone: "8328202", location: "后勤楼3楼", building: "logistics" },
+            { id: 3, name: "总务科3", phone: "8236618", location: "后勤楼3楼", building: "logistics" },
+            { id: 4, name: "总务科4", phone: "8331770", location: "后勤楼3楼", building: "logistics" },
+            { id: 5, name: "设备科医修室", phone: "8321310", location: "后勤楼3楼", building: "logistics" },
+            { id: 6, name: "物业公司办公室", phone: "8104470", location: "后勤楼3楼", building: "logistics" },
+            { id: 7, name: "食堂办公室", phone: "18185816184", location: "后勤楼3楼", building: "logistics" },
+            { id: 8, name: "设备科", phone: "8325068", location: "后勤楼4楼", building: "logistics" },
+            { id: 9, name: "基建办", phone: "8320648", location: "后勤楼4楼", building: "logistics" },
+            { id: 10, name: "基建办", phone: "8238858", location: "后勤楼4楼", building: "logistics" },
+            { id: 11, name: "后勤维修部", phone: "8225708", location: "N9", building: "logistics" },
+            
+            // 住院部 (inpatient)
+            { id: 12, name: "关节矫形与运动医学科", phone: "8233158", location: "1号住院楼15F", building: "inpatient" },
+            { id: 13, name: "创伤骨科二病区", phone: "8321408", location: "1号住院楼14F", building: "inpatient" },
+            { id: 14, name: "创伤骨科一病区", phone: "8321428", location: "1号住院楼13F", building: "inpatient" },
+            { id: 15, name: "脊柱外科", phone: "6707445", location: "1号住院楼12F", building: "inpatient" },
+            { id: 16, name: "普儿科", phone: "6707416", location: "1号住院楼11F", building: "inpatient" },
+            { id: 17, name: "普儿科", phone: "8223986", location: "1号住院楼10F", building: "inpatient" },
+            { id: 18, name: "神经内科", phone: "8222826", location: "1号住院楼9F", building: "inpatient" },
+            { id: 19, name: "神经内科", phone: "8233226", location: "1号住院楼8F", building: "inpatient" },
+            { id: 20, name: "妇科", phone: "6707434", location: "1号住院楼7F", building: "inpatient" },
+            { id: 21, name: "产科", phone: "8268228", location: "1号住院楼6F", building: "inpatient" },
+            { id: 22, name: "产科", phone: "6707531", location: "1号住院楼5F", building: "inpatient" },
+            { id: 23, name: "产房", phone: "6707526", location: "1号住院楼4F", building: "inpatient" },
+            { id: 24, name: "新生儿科", phone: "8238918", location: "1号住院楼3F", building: "inpatient" },
+            { id: 25, name: "消化内科", phone: "8236126", location: "1号住院楼2F", building: "inpatient" },
+            { id: 26, name: "消化内科", phone: "8238276", location: "1号住院楼1F", building: "inpatient" },
+            { id: 27, name: "肛肠科", phone: "8322815", location: "2号住院楼14F", building: "inpatient" },
+            { id: 28, name: "泌尿外科", phone: "8321424", location: "2号住院楼13F", building: "inpatient" },
+            { id: 29, name: "耳鼻喉科/口腔科", phone: "8238758", location: "2号住院楼12F", building: "inpatient" },
+            { id: 30, name: "烧伤整形美容外科", phone: "6707450", location: "2号住院楼11F", building: "inpatient" },
+            { id: 31, name: "乳腺甲状腺外科", phone: "8229638", location: "2号住院楼10F", building: "inpatient" },
+            { id: 32, name: "胃肠疝外科", phone: "8321438", location: "2号住院楼9F", building: "inpatient" },
+            { id: 33, name: "肝胆外科", phone: "8233828", location: "2号住院楼8F", building: "inpatient" },
+            { id: 34, name: "胸外科/心脏大血管外科", phone: "8236778", location: "2号住院楼7F", building: "inpatient" },
+            { id: 35, name: "胸外科/心脏大血管外科", phone: "6707522", location: "2号住院楼6F", building: "inpatient" },
+            { id: 36, name: "神经外科", phone: "6707514", location: "2号住院楼5F", building: "inpatient" },
+            { id: 37, name: "神经外科", phone: "8330007", location: "2号住院楼4F", building: "inpatient" },
+            { id: 38, name: "心血管内科", phone: "8223568", location: "2号住院楼3F", building: "inpatient" },
+            { id: 39, name: "心血管内科", phone: "8227278", location: "2号住院楼3F", building: "inpatient" },
+            { id: 40, name: "心血管内科", phone: "8321418", location: "2号住院楼2F", building: "inpatient" },
+            { id: 41, name: "核医学科", phone: "NA", location: "2号住院楼1F", building: "inpatient" },
+            { id: 42, name: "呼吸与危重症医学科", phone: "NA", location: "3号住院楼13F", building: "inpatient" },
+            { id: 43, name: "呼吸与危重症医学科", phone: "8268706", location: "3号住院楼12F", building: "inpatient" },
+            { id: 44, name: "内分泌科", phone: "8328602", location: "3号住院楼11F", building: "inpatient" },
+            { id: 45, name: "眼科", phone: "8328953", location: "3号住院楼10F", building: "inpatient" },
+            { id: 46, name: "肿瘤科/血液内科", phone: "8320391", location: "3号住院楼9F", building: "inpatient" },
+            { id: 47, name: "肿瘤科/血液内科", phone: "8227178", location: "3号住院楼8F", building: "inpatient" },
+            { id: 48, name: "风湿免疫(老年病)科", phone: "8228768", location: "3号住院楼7F", building: "inpatient" },
+            { id: 49, name: "康复医学科", phone: "8227726", location: "3号住院楼6F", building: "inpatient" },
+            { id: 50, name: "肾内科", phone: "8223676", location: "3号住院楼5F", building: "inpatient" },
+            { id: 51, name: "心理睡眠科", phone: "8226286", location: "3号住院楼4F", building: "inpatient" },
+            { id: 52, name: "全科医学科", phone: "8233756", location: "3号住院楼3F", building: "inpatient" },
+            { id: 53, name: "医保办住院收费处", phone: "6707438", location: "3号住院楼3F", building: "inpatient" },
+            { id: 54, name: "物资供应科", phone: "8321272", location: "3号住院楼3F", building: "inpatient" },
+            
+            // 门诊 (outpatient)
+            { id: 55, name: "便民门诊", phone: "NA", location: "门诊1楼A区", building: "outpatient" },
+            { id: 56, name: "心电图室", phone: "NA", location: "门诊1楼A区", building: "outpatient" },
+            { id: 57, name: "儿童保健科", phone: "8222706", location: "门诊1楼A区", building: "outpatient" },
+            { id: 58, name: "儿科门诊", phone: "8222706", location: "门诊1楼B区", building: "outpatient" },
+            { id: 59, name: "药师门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 60, name: "烧伤整形血管外科门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 61, name: "泌尿外科门诊", phone: "15934678316", location: "门诊1楼C区", building: "outpatient" },
+            { id: 62, name: "血管肿瘤介入科", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 63, name: "关节创伤骨科专家门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 64, name: "关节创伤骨科二门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 65, name: "脊柱创伤骨科专家门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 66, name: "脊柱创伤骨科一门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 67, name: "胸心血管外科门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 68, name: "胸心血管外科专家门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 69, name: "康复医学科门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 70, name: "肛肠科门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 71, name: "神经外科门诊", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 72, name: "肌电图室", phone: "NA", location: "门诊1楼C区", building: "outpatient" },
+            { id: 73, name: "影像科办公室", phone: "8322650", location: "门诊1楼D区", building: "outpatient" },
+            { id: 74, name: "影像科检查室", phone: "8233076", location: "门诊1楼E区", building: "outpatient" },
+            { id: 75, name: "药学部采购办公室", phone: "8324201", location: "门诊1楼F区", building: "outpatient" },
+            { id: 76, name: "临床药学室", phone: "6800037", location: "门诊1楼F区", building: "outpatient" },
+            { id: 77, name: "库房", phone: "8321675", location: "门诊1楼F区", building: "outpatient" },
+            { id: 78, name: "门诊中药房", phone: "8321531", location: "门诊1楼F区", building: "outpatient" },
+            { id: 79, name: "门诊药房", phone: "8226758", location: "门诊1楼F区", building: "outpatient" },
+            { id: 80, name: "住院药房", phone: "8236228", location: "门诊1楼F区", building: "outpatient" },
+            { id: 81, name: "收费处", phone: "8331513", location: "门诊1楼G区", building: "outpatient" },
+            { id: 82, name: "门诊大厅", phone: "8265019", location: "门诊1楼G区", building: "outpatient" },
+            { id: 83, name: "急救车班", phone: "8220228", location: "门诊1楼G区", building: "outpatient" },
+            { id: 84, name: "急诊科1", phone: "8233526", location: "门诊1楼H区", building: "outpatient" },
+            { id: 85, name: "急诊科2", phone: "8233806", location: "门诊1楼H区", building: "outpatient" },
+            { id: 86, name: "神经内科", phone: "NA", location: "门诊2楼A区", building: "outpatient" },
+            { id: 87, name: "脑电图", phone: "NA", location: "门诊2楼A区", building: "outpatient" },
+            { id: 88, name: "TCD", phone: "NA", location: "门诊2楼A区", building: "outpatient" },
+            { id: 89, name: "内分泌科门诊", phone: "NA", location: "门诊2楼A区", building: "outpatient" },
+            { id: 90, name: "全科医学科门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 91, name: "心血管内科门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 92, name: "肾内科门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 93, name: "风湿免疫科（老年病）", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 94, name: "痛风门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 95, name: "骨质疏松门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 96, name: "呼吸与危重症医学科", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 97, name: "肺功能室", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 98, name: "戒烟门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 99, name: "肿瘤血液科", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 100, name: "肿瘤放疗门诊", phone: "NA", location: "门诊2楼B区", building: "outpatient" },
+            { id: 101, name: "感染科发热门诊", phone: "8229792", location: "门诊2楼B区", building: "outpatient" },
+            { id: 102, name: "公共卫生科（预保科）", phone: "8320701", location: "门诊2楼C区", building: "outpatient" },
+            { id: 103, name: "消化内科", phone: "NA", location: "门诊2楼C区", building: "outpatient" },
+            { id: 104, name: "消化内科专家门诊", phone: "NA", location: "门诊2楼C区", building: "outpatient" },
+            { id: 105, name: "肝胆外科门诊", phone: "NA", location: "门诊2楼C区", building: "outpatient" },
+            { id: 106, name: "普外科门诊", phone: "NA", location: "门诊2楼C区", building: "outpatient" },
+            { id: 107, name: "法医司法鉴定所", phone: "8332836", location: "门诊2楼C区", building: "outpatient" },
+            { id: 108, name: "疼痛科", phone: "8330621", location: "门诊2楼C区", building: "outpatient" },
+            { id: 109, name: "伤口造口门诊", phone: "NA", location: "门诊2楼D区", building: "outpatient" },
+            { id: 110, name: "PICC门诊", phone: "NA", location: "门诊2楼D区", building: "outpatient" },
+            { id: 111, name: "病案管理科统计", phone: "8321994", location: "门诊2楼E区", building: "outpatient" },
+            { id: 112, name: "病案复印窗口", phone: "8222118", location: "门诊2楼E区", building: "outpatient" },
+            { id: 113, name: "病案质控", phone: "8320092", location: "门诊2楼E区", building: "outpatient" },
+            { id: 114, name: "病案编码室一", phone: "8233538", location: "门诊2楼E区", building: "outpatient" },
+            { id: 115, name: "病案编码室二", phone: "8223598", location: "门诊2楼E区", building: "outpatient" },
+            { id: 116, name: "病案主任办公室", phone: "8325851", location: "门诊2楼E区", building: "outpatient" },
+            { id: 117, name: "血管肿瘤介入科（导管室）", phone: "6800036", location: "门诊2楼F区", building: "outpatient" },
+            { id: 118, name: "内窥镜科", phone: "8236986", location: "门诊2楼G区", building: "outpatient" },
+            { id: 119, name: "视频脑电监测室", phone: "8320116", location: "门诊2楼G区", building: "outpatient" },
+            { id: 120, name: "超声医学科", phone: "8265133", location: "门诊3楼A区", building: "outpatient" },
+            { id: 121, name: "超声医学科", phone: "8265133", location: "门诊3楼B区", building: "outpatient" },
+            { id: 122, name: "口腔科", phone: "8238218", location: "门诊3楼C区", building: "outpatient" },
+            { id: 123, name: "眼科", phone: "8321834", location: "门诊3楼D区", building: "outpatient" },
+            { id: 124, name: "健康管理科", phone: "8235816", location: "门诊3楼", building: "outpatient" },
+            { id: 125, name: "神经外科重症ICU", phone: "8321051", location: "门诊3楼F区", building: "outpatient" },
+            { id: 126, name: "医学检验科办公室", phone: "8321721", location: "门诊3楼G区", building: "outpatient" },
+            { id: 127, name: "医学检验科急诊室", phone: "6707537", location: "门诊3楼G区", building: "outpatient" },
+            { id: 128, name: "医学检验科检验大厅", phone: "8321848", location: "门诊3楼G区", building: "outpatient" },
+            { id: 129, name: "医学检验科微生物室", phone: "6549356", location: "门诊3楼G区", building: "outpatient" },
+            { id: 130, name: "医学检验科PCR室", phone: "8238258", location: "门诊3楼G区", building: "outpatient" },
+            { id: 131, name: "妇产科门诊1", phone: "6707434", location: "门诊3楼H区", building: "outpatient" },
+            { id: 132, name: "妇产科门诊2", phone: "8330491", location: "门诊3楼H区", building: "outpatient" },
+            { id: 133, name: "皮肤科门诊", phone: "8326449", location: "门诊4楼A1区", building: "outpatient" },
+            { id: 134, name: "皮肤科病房", phone: "8327827", location: "门诊4楼A2区", building: "outpatient" },
+            { id: 135, name: "心理睡眠科", phone: "8326333", location: "门诊4楼A3区", building: "outpatient" },
+            { id: 136, name: "重症医学科ICU", phone: "8265037", location: "门诊4楼F区", building: "outpatient" },
+            { id: 137, name: "输血科", phone: "8265581", location: "门诊4楼F区", building: "outpatient" },
+            { id: 138, name: "手术室", phone: "8321482", location: "门诊4楼G区", building: "outpatient" },
+            { id: 139, name: "病理科", phone: "8321724", location: "门诊4楼A1区", building: "outpatient" },
+            { id: 140, name: "中医科病房", phone: "8320928", location: "门诊5楼A1区", building: "outpatient" },
+            { id: 141, name: "中医科门诊", phone: "8777312", location: "门诊5楼A2区", building: "outpatient" },
+            { id: 142, name: "中医科门诊", phone: "8227518", location: "门诊5楼A2区", building: "outpatient" },
+            { id: 143, name: "医患关系办公室", phone: "8223136", location: "门诊5楼C-D区", building: "outpatient" },
+            { id: 144, name: "血液透析中心", phone: "8268836", location: "门诊5楼F区", building: "outpatient" },
+            { id: 145, name: "感染管理科1（主任办公室）", phone: "8330563", location: "门诊6楼D区", building: "outpatient" },
+            { id: 146, name: "感染管理科2", phone: "8238178", location: "门诊6楼D区", building: "outpatient" },
+            { id: 147, name: "感染管理科3", phone: "8238398", location: "门诊6楼D区", building: "outpatient" },
+            { id: 148, name: "感染管理科4（传染病管理、死亡证明开具）", phone: "8321861", location: "门诊6楼D区", building: "outpatient" },
+            { id: 149, name: "消毒供应室", phone: "8225198", location: "N8负一楼", building: "outpatient" },
+            { id: 150, name: "体检科2楼", phone: "8227058", location: "N4二楼", building: "outpatient" },
+            
+            // 行政楼 (administration)
+            { id: 151, name: "胶装室（402）", phone: "8320490", location: "行政楼4楼", building: "administration" },
+            { id: 152, name: "党委办公室2(405)", phone: "8321791", location: "行政楼4楼", building: "administration" },
+            { id: 153, name: "质控科(409)", phone: "8265203", location: "行政楼4楼", building: "administration" },
+            { id: 154, name: "院办公室2(412)", phone: "8265523", location: "行政楼4楼", building: "administration" },
+            { id: 155, name: "财务科1（301）", phone: "8265683", location: "行政楼4楼", building: "administration" },
+            { id: 156, name: "财务科4（304）", phone: "8321141", location: "行政楼3楼", building: "administration" },
+            { id: 157, name: "纪委办2（307）", phone: "8327379", location: "行政楼3楼", building: "administration" },
+            { id: 158, name: "科教科3（312）", phone: "8325234", location: "行政楼3楼", building: "administration" },
+            { id: 159, name: "人事科2（311）", phone: "8320728", location: "行政楼3楼", building: "administration" },
+            { id: 160, name: "财务科9（322）", phone: "8229867", location: "行政楼3楼", building: "administration" },
+            { id: 161, name: "信息科2（203）", phone: "6707536", location: "行政楼3楼", building: "administration" },
+            { id: 162, name: "医务部3（211）", phone: "8265331", location: "行政楼2楼", building: "administration" },
+            { id: 163, name: "护理部2（219）", phone: "8265521", location: "行政楼2楼", building: "administration" },
+            { id: 164, name: "护理部5（222）", phone: "NA", location: "行政楼2楼", building: "administration" },
+            { id: 165, name: "小车班", phone: "NA", location: "行政楼1楼", building: "administration" },
+            { id: 166, name: "党委办公室4（403）", phone: "8265681", location: "行政楼4楼", building: "administration" },
+            { id: 167, name: "党委办公室1(407)", phone: "8330853", location: "行政楼4楼", building: "administration" },
+            { id: 168, name: "院办公室1(410)", phone: "8320508", location: "行政楼4楼", building: "administration" },
+            { id: 169, name: "院办公室3(413)", phone: "8322728", location: "行政楼4楼", building: "administration" },
+            { id: 170, name: "财务科2（302）", phone: "8321221", location: "行政楼3楼", building: "administration" },
+            { id: 171, name: "人事科4（315）", phone: "8265361", location: "行政楼3楼", building: "administration" },
+            { id: 172, name: "审计科1（308）", phone: "8320777", location: "行政楼3楼", building: "administration" },
+            { id: 173, name: "科教科1（314）", phone: "8265395", location: "行政楼3楼", building: "administration" },
+            { id: 174, name: "人事科3（313）", phone: "8240346", location: "行政楼3楼", building: "administration" },
+            { id: 175, name: "健康教育科（209）", phone: "8265303", location: "行政楼2楼", building: "administration" },
+            { id: 176, name: "医务部2（213）", phone: "8265083", location: "行政楼2楼", building: "administration" },
+            { id: 177, name: "护理部3（220）", phone: "8265009", location: "行政楼2楼", building: "administration" },
+            { id: 178, name: "党委办公室3(404)", phone: "8321791", location: "行政楼4楼", building: "administration" },
+            { id: 179, name: "工会(408)", phone: "8320738", location: "行政楼4楼", building: "administration" },
+            { id: 180, name: "财务科3（303）", phone: "8221807", location: "行政楼3楼", building: "administration" },
+            { id: 181, name: "纪委办1（306）", phone: "8327379", location: "行政楼3楼", building: "administration" },
+            { id: 182, name: "人事科1（310）", phone: "8325239", location: "行政楼3楼", building: "administration" },
+            { id: 183, name: "科教科2（316）", phone: "8328554", location: "行政楼3楼", building: "administration" },
+            { id: 184, name: "财务科8（321）", phone: "8321197", location: "行政楼3楼", building: "administration" },
+            { id: 185, name: "应急办（211）", phone: "8330359", location: "行政楼2楼", building: "administration" },
+            { id: 186, name: "医务部1（215）", phone: "8320734", location: "行政楼2楼", building: "administration" },
+            { id: 187, name: "护理部4（221）", phone: "8320742", location: "行政楼2楼", building: "administration" }
+        ];
+
+        // 获取DOM元素
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const filterButtons = document.querySelectorAll('.filter-btn');
         
-        // 登录状态管理
-        function checkLoginStatus() {
-            const loginStatus = localStorage.getItem('isLoggedIn');
-            if (loginStatus === 'true') {
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainSystem').classList.remove('hidden');
-                return true;
-            }
-            return false;
+        // 当前筛选条件
+        let currentFilter = 'all';
+        
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
         }
         
-        // 登录表单提交
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // 渲染部门卡片
+        function renderDepartments(departments) {
+            resultsContainer.innerHTML = '';
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loginBtn = document.getElementById('loginBtn');
+            if (departments.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results col-span-full">
+                        <i class="fas fa-search text-4xl mb-3 text-gray-300"></i>
+                        <p>未找到匹配的部门</p>
+                    </div>
+                `;
+                return;
+            }
             
-            // 验证账号密码
-            if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
-                // 登录成功
-                localStorage.setItem('isLoggedIn', 'true');
-                errorMessage.classList.add('hidden');
+            departments.forEach((dept, index) => {
+                // 确定大楼对应的徽章样式和图标
+                let badgeClass = '';
+                let buildingName = '';
+                let iconClass = '';
                 
-                // 显示主系统
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainSystem').classList.remove('hidden');
-                
-                // 初始化主系统
-                initializeMainSystem();
-            } else {
-                // 登录失败
-                errorMessage.classList.remove('hidden');
-                
-                // 防暴力破解机制
-                let failedAttempts = parseInt(localStorage.getItem('failedAttempts') || '0') + 1;
-                localStorage.setItem('failedAttempts', failedAttempts);
-                
-                if (failedAttempts >= 3) {
-                    loginBtn.disabled = true;
-                    loginBtn.innerHTML = '<i class="fas fa-clock mr-2"></i>请30秒后再试';
-                    
-                    setTimeout(() => {
-                        loginBtn.disabled = false;
-                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>登录';
-                        localStorage.removeItem('failedAttempts');
-                    }, 30000);
+                switch(dept.building) {
+                    case 'administration':
+                        badgeClass = 'badge-administration';
+                        buildingName = '行政楼';
+                        iconClass = 'fa-landmark';
+                        break;
+                    case 'logistics':
+                        badgeClass = 'badge-logistics';
+                        buildingName = '后勤楼';
+                        iconClass = 'fa-tools';
+                        break;
+                    case 'outpatient':
+                        badgeClass = 'badge-outpatient';
+                        buildingName = '门诊';
+                        iconClass = 'fa-stethoscope';
+                        break;
+                    case 'inpatient':
+                        badgeClass = 'badge-inpatient';
+                        buildingName = '住院部';
+                        iconClass = 'fa-hospital-user';
+                        break;
                 }
+                
+                const card = document.createElement('div');
+                card.className = 'department-card bg-white p-6 fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                // 处理电话显示
+                let phoneDisplay = '';
+                if (dept.phone === 'NA') {
+                    phoneDisplay = `<span class="text-gray-500 no-phone">暂无电话</span>`;
+                } else {
+                    // 如果是手机号，检查是否需要添加区号
+                    let phoneNumber = dept.phone;
+                    if (phoneNumber.length >= 11 && /^1[3-9]\d{9}$/.test(phoneNumber)) {
+                        // 手机号，直接显示
+                        phoneDisplay = `<a href="tel:${phoneNumber}" class="text-blue-500 hover:underline">${phoneNumber}</a>`;
+                    } else {
+                        // 座机号，添加区号
+                        let fullPhone = phoneNumber.length === 7 ? `0858-${phoneNumber}` : phoneNumber;
+                        phoneDisplay = `<a href="tel:${fullPhone}" class="text-blue-500 hover:underline">${fullPhone}</a>`;
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="department-icon mr-4">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-semibold text-gray-800">${dept.name}</h3>
+                                <span class="badge ${badgeClass}">${buildingName}</span>
+                            </div>
+                            <div class="flex items-center text-gray-600 mb-2">
+                                <i class="fas fa-phone-alt mr-2 text-blue-500"></i>
+                                ${phoneDisplay}
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>
+                                <span>${dept.location}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加点击复制电话号码功能
+                card.addEventListener('click', function(e) {
+                    // 只有当点击的不是电话链接时才执行复制操作
+                    if (!e.target.closest('a[href^="tel:"]')) {
+                        if (dept.phone !== 'NA') {
+                            // 如果是7位座机号，添加区号
+                            let phoneToCopy = dept.phone;
+                            if (phoneToCopy.length === 7 && !phoneToCopy.includes('-')) {
+                                phoneToCopy = `0858-${phoneToCopy}`;
+                            }
+                            
+                            navigator.clipboard.writeText(phoneToCopy).then(() => {
+                                // 显示复制成功提示
+                                const phoneLink = card.querySelector('a[href^="tel:"]');
+                                if (phoneLink) {
+                                    const originalContent = phoneLink.textContent;
+                                    phoneLink.textContent = '已复制!';
+                                    
+                                    setTimeout(() => {
+                                        phoneLink.textContent = originalContent;
+                                    }, 2000);
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                resultsContainer.appendChild(card);
+            });
+        }
+        
+        // 搜索和筛选部门
+        function searchAndFilterDepartments() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            let filteredDepartments = departmentData;
+            
+            // 应用筛选条件
+            if (currentFilter !== 'all') {
+                filteredDepartments = filteredDepartments.filter(dept => dept.building === currentFilter);
+            }
+            
+            // 应用搜索条件
+            if (searchTerm) {
+                filteredDepartments = filteredDepartments.filter(dept => 
+                    dept.name.toLowerCase().includes(searchTerm) || 
+                    dept.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderDepartments(filteredDepartments);
+        }
+        
+        // 初始化筛选按钮事件
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 移除所有按钮的active类
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // 为当前按钮添加active类
+                this.classList.add('active');
+                
+                // 更新当前筛选条件
+                currentFilter = this.getAttribute('data-filter');
+                
+                // 执行搜索和筛选
+                searchAndFilterDepartments();
+            });
+        });
+        
+        // 初始化搜索按钮事件
+        searchButton.addEventListener('click', searchAndFilterDepartments);
+        
+        // 初始化输入框事件（支持回车搜索和防抖）
+        searchInput.addEventListener('input', debounce(searchAndFilterDepartments, 300));
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAndFilterDepartments();
             }
         });
         
-        // 退出登录
-        function setupLogoutButtons() {
-            const logoutBtn = document.getElementById('logoutBtn');
-            const logoutBtnMobile = document.getElementById('logoutBtnMobile');
-            
-            function logout() {
-                localStorage.removeItem('isLoggedIn');
-                document.getElementById('loginPage').classList.remove('hidden');
-                document.getElementById('mainSystem').classList.add('hidden');
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('errorMessage').classList.add('hidden');
-            }
-            
-            if (logoutBtn) logoutBtn.addEventListener('click', logout);
-            if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', logout);
-        }
+        // 为了更好的用户体验，在页面加载时显示所有部门
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                renderDepartments(departmentData);
+            }, 300);
+        });
         
-        // 初始化主系统
-        function initializeMainSystem() {
-            // 数据存储
-            let books = JSON.parse(localStorage.getItem('books')) || [];
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            let records = JSON.parse(localStorage.getItem('records')) || [];
-
-            // DOM元素
-            const mobileMenuButton = document.getElementById('mobileMenuButton');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const addBookBtn = document.getElementById('addBookBtn');
-            const addBookForm = document.getElementById('addBookForm');
-            const bookForm = document.getElementById('bookForm');
-            const cancelBookBtn = document.getElementById('cancelBookBtn');
-            const bookList = document.getElementById('bookList');
-            const addUserBtn = document.getElementById('addUserBtn');
-            const addUserForm = document.getElementById('addUserForm');
-            const userForm = document.getElementById('userForm');
-            const cancelUserBtn = document.getElementById('cancelUserBtn');
-            const userList = document.getElementById('userList');
-            const borrowForm = document.getElementById('borrowForm');
-            const borrowUser = document.getElementById('borrowUser');
-            const borrowBook = document.getElementById('borrowBook');
-            const borrowDate = document.getElementById('borrowDate');
-            const borrowedList = document.getElementById('borrowedList');
-            const recordList = document.getElementById('recordList');
-            const searchRecord = document.getElementById('searchRecord');
-            const searchBtn = document.getElementById('searchBtn');
-
-            // 设置当前日期
-            const today = new Date();
-            borrowDate.value = today.toISOString().split('T')[0];
-            
-            // 加载数据
-            renderBooks();
-            renderUsers();
-            renderBorrowedBooks();
-            renderRecords();
-            
-            // 初始化下拉菜单
-            updateUserDropdown();
-            updateBookDropdown();
-            
-            // 移动端菜单切换
-            mobileMenuButton.addEventListener('click', function() {
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // 添加图书按钮
-            addBookBtn.addEventListener('click', function() {
-                addBookForm.classList.remove('hidden');
-                bookForm.reset();
-            });
-            
-            // 取消添加图书
-            cancelBookBtn.addEventListener('click', function() {
-                addBookForm.classList.add('hidden');
-            });
-            
-            // 提交图书表单
-            bookForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const title = document.getElementById('bookTitle').value;
-                const author = document.getElementById('bookAuthor').value;
-                const isbn = document.getElementById('bookISBN').value;
-                const quantity = parseInt(document.getElementById('bookQuantity').value);
-                
-                const newBook = {
-                    id: Date.now(),
-                    title,
-                    author,
-                    isbn,
-                    quantity
-                };
-                
-                books.push(newBook);
-                saveBooks();
-                renderBooks();
-                updateBookDropdown();
-                addBookForm.classList.add('hidden');
-                bookForm.reset();
-                
-                alert('图书添加成功！');
-            });
-            
-            // 添加用户按钮
-            addUserBtn.addEventListener('click', function() {
-                addUserForm.classList.remove('hidden');
-                userForm.reset();
-            });
-            
-            // 取消添加用户
-            cancelUserBtn.addEventListener('click', function() {
-                addUserForm.classList.add('hidden');
-            });
-            
-            // 提交用户表单
-            userForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('userName').value;
-                const id = document.getElementById('userID').value;
-                const phone = document.getElementById('userPhone').value;
-                
-                const newUser = {
-                    id: Date.now(),
-                    name,
-                    userId: id,
-                    phone
-                };
-                
-                users.push(newUser);
-                saveUsers();
-                renderUsers();
-                updateUserDropdown();
-                addUserForm.classList.add('hidden');
-                userForm.reset();
-                
-                alert('用户添加成功！');
-            });
-            
-            // 提交借阅表单
-            borrowForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const userId = parseInt(borrowUser.value);
-                const bookId = parseInt(borrowBook.value);
-                const borrowDateValue = borrowDate.value;
-                
-                if (!userId || !bookId) {
-                    alert('请选择用户和图书！');
-                    return;
-                }
-                
-                const user = users.find(u => u.id === userId);
-                const book = books.find(b => b.id === bookId);
-                
-                if (book.quantity <= 0) {
-                    alert('该图书库存不足！');
-                    return;
-                }
-                
-                const newRecord = {
-                    id: Date.now(),
-                    userId,
-                    userName: user.name,
-                    bookId,
-                    bookTitle: book.title,
-                    borrowDate: borrowDateValue,
-                    returnDate: null,
-                    status: '借出'
-                };
-                
-                // 减少图书库存
-                book.quantity--;
-                
-                records.push(newRecord);
-                saveBooks();
-                saveRecords();
-                renderBooks();
-                renderBorrowedBooks();
-                renderRecords();
-                updateBookDropdown();
-                borrowForm.reset();
-                borrowDate.value = today.toISOString().split('T')[0];
-                
-                alert('借阅成功！');
-            });
-            
-            // 搜索借阅记录
-            searchBtn.addEventListener('click', function() {
-                renderRecords();
-            });
-            
-            searchRecord.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    renderRecords();
-                }
-            });
-            
-            // 渲染图书列表
-            function renderBooks() {
-                bookList.innerHTML = '';
-                
-                if (books.length === 0) {
-                    bookList.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">暂无图书数据</td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                books.forEach(book => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${book.title}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${book.author}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${book.isbn}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${book.quantity}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <button onclick="editBook(${book.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="deleteBook(${book.id})" class="text-red-600 hover:text-red-900">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    bookList.appendChild(row);
-                });
-            }
-            
-            // 渲染用户列表
-            function renderUsers() {
-                userList.innerHTML = '';
-                
-                if (users.length === 0) {
-                    userList.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">暂无用户数据</td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${user.name}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${user.userId}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${user.phone}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <button onclick="editUser(${user.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    userList.appendChild(row);
-                });
-            }
-            
-            // 渲染当前借出图书列表
-            function renderBorrowedBooks() {
-                borrowedList.innerHTML = '';
-                
-                const borrowedBooks = records.filter(record => record.status === '借出');
-                
-                if (borrowedBooks.length === 0) {
-                    borrowedList.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">暂无借出图书</td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                borrowedBooks.forEach(record => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${record.userName}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${record.bookTitle}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${record.borrowDate}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <button onclick="returnBook(${record.id})" class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-                                归还
-                            </button>
-                        </td>
-                    `;
-                    borrowedList.appendChild(row);
-                });
-            }
-            
-            // 渲染借阅记录列表
-            function renderRecords() {
-                recordList.innerHTML = '';
-                
-                const searchTerm = searchRecord.value.toLowerCase();
-                let filteredRecords = records;
-                
-                if (searchTerm) {
-                    filteredRecords = records.filter(record => 
-                        record.userName.toLowerCase().includes(searchTerm) || 
-                        record.bookTitle.toLowerCase().includes(searchTerm)
-                    );
-                }
-                
-                if (filteredRecords.length === 0) {
-                    recordList.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">暂无借阅记录</td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                filteredRecords.forEach(record => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${record.userName}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${record.bookTitle}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${record.borrowDate}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${record.returnDate || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs rounded-full ${record.status === '借出' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
-                                ${record.status}
-                            </span>
-                        </td>
-                    `;
-                    recordList.appendChild(row);
-                });
-            }
-            
-            // 更新用户下拉菜单
-            function updateUserDropdown() {
-                borrowUser.innerHTML = '<option value="">请选择用户</option>';
-                
-                users.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = `${user.name} (${user.userId})`;
-                    borrowUser.appendChild(option);
-                });
-            }
-            
-            // 更新图书下拉菜单
-            function updateBookDropdown() {
-                borrowBook.innerHTML = '<option value="">请选择图书</option>';
-                
-                books.forEach(book => {
-                    if (book.quantity > 0) {
-                        const option = document.createElement('option');
-                        option.value = book.id;
-                        option.textContent = `${book.title} (剩余: ${book.quantity})`;
-                        borrowBook.appendChild(option);
-                    }
-                });
-            }
-            
-            // 编辑图书
-            window.editBook = function(id) {
-                const book = books.find(b => b.id === id);
-                if (!book) return;
-                
-                document.getElementById('bookTitle').value = book.title;
-                document.getElementById('bookAuthor').value = book.author;
-                document.getElementById('bookISBN').value = book.isbn;
-                document.getElementById('bookQuantity').value = book.quantity;
-                
-                addBookForm.classList.remove('hidden');
-                
-                // 删除旧记录
-                books = books.filter(b => b.id !== id);
-                saveBooks();
-            }
-            
-            // 删除图书
-            window.deleteBook = function(id) {
-                if (confirm('确定要删除这本图书吗？')) {
-                    // 检查是否有未归还的记录
-                    const hasUnreturned = records.some(record => 
-                        record.bookId === id && record.status === '借出'
-                    );
-                    
-                    if (hasUnreturned) {
-                        alert('该图书有未归还记录，无法删除！');
-                        return;
-                    }
-                    
-                    books = books.filter(book => book.id !== id);
-                    saveBooks();
-                    renderBooks();
-                    updateBookDropdown();
-                }
-            }
-            
-            // 编辑用户
-            window.editUser = function(id) {
-                const user = users.find(u => u.id === id);
-                if (!user) return;
-                
-                document.getElementById('userName').value = user.name;
-                document.getElementById('userID').value = user.userId;
-                document.getElementById('userPhone').value = user.phone;
-                
-                addUserForm.classList.remove('hidden');
-                
-                // 删除旧记录
-                users = users.filter(u => u.id !== id);
-                saveUsers();
-            }
-            
-            // 删除用户
-            window.deleteUser = function(id) {
-                if (confirm('确定要删除这个用户吗？')) {
-                    // 检查是否有未归还的记录
-                    const hasUnreturned = records.some(record => 
-                        record.userId === id && record.status === '借出'
-                    );
-                    
-                    if (hasUnreturned) {
-                        alert('该用户有未归还图书，无法删除！');
-                        return;
-                    }
-                    
-                    users = users.filter(user => user.id !== id);
-                    saveUsers();
-                    renderUsers();
-                    updateUserDropdown();
-                }
-            }
-            
-            // 归还图书
-            window.returnBook = function(recordId) {
-                const today = new Date().toISOString().split('T')[0];
-                const record = records.find(r => r.id === recordId);
-                
-                if (record) {
-                    record.returnDate = today;
-                    record.status = '已归还';
-                    
-                    // 增加图书库存
-                    const book = books.find(b => b.id === record.bookId);
-                    if (book) {
-                        book.quantity++;
-                    }
-                    
-                    saveBooks();
-                    saveRecords();
-                    renderBooks();
-                    renderBorrowedBooks();
-                    renderRecords();
-                    updateBookDropdown();
-                    
-                    alert('图书归还成功！');
-                }
-            }
-            
-            // 保存数据到localStorage
-            function saveBooks() {
-                localStorage.setItem('books', JSON.stringify(books));
-            }
-            
-            function saveUsers() {
-                localStorage.setItem('users', JSON.stringify(users));
-            }
-            
-            function saveRecords() {
-                localStorage.setItem('records', JSON.stringify(records));
-            }
-        }
-        
-        // 检查登录状态
-        if (checkLoginStatus()) {
-            initializeMainSystem();
-        }
-        
-        // 设置退出登录按钮
-        setupLogoutButtons();
+        // 适配移动端的响应式调整
+        window.addEventListener('resize', function() {
+            // 可以在这里添加根据屏幕尺寸调整UI的代码
+        });
     </script>
 </body>
 </html>
